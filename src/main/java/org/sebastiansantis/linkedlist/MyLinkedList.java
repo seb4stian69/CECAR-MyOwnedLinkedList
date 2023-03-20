@@ -2,24 +2,20 @@ package org.sebastiansantis.linkedlist;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.sebastiansantis.node.MyNode;
-import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor@AllArgsConstructor@Data
-public class MyLinkedList<E> extends AbstractList<E> {
+public class MyLinkedList<E> {
 
     /* | ---------------------------------- + Attributes + ---------------------------------- | */
 
     private MyNode<E> head;
     private Integer size = 0;
     private ArrayList<String> allHash = new ArrayList<>();
-
 
     /* | ---------------------------------- +  All Methods  + ---------------------------------- | */
 
@@ -45,9 +41,12 @@ public class MyLinkedList<E> extends AbstractList<E> {
         if (this.head == null) {
             this.head = newNode;
         } else {
-            MyNode<E> aux = this.head;
-            while (aux.getNext() != null) {aux = aux.getNext();}
-            aux.setNext(newNode);
+
+            MyNode<E> current = this.head;
+
+            while (current.getNext() != null) {current = current.getNext();}
+            current.setNext(newNode);
+
         }
 
         this.size+=1;
@@ -64,41 +63,74 @@ public class MyLinkedList<E> extends AbstractList<E> {
             return;
         }
 
-        MyNode<E> aux = this.head;
+        MyNode<E> current = this.head;
 
-        while (!Objects.equals(aux.getNext(), null) && !Objects.equals(aux.getNext().getCode(), hash)) {
-            aux = aux.getNext();
+        while (!Objects.equals(current.getNext(), null) && !Objects.equals(current.getNext().getCode(), hash)) {
+            current = current.getNext();
         }
 
-        if (!Objects.equals(aux.getNext(), null)) {
-            aux.setNext(aux.getNext().getNext());
+        if (!Objects.equals(current.getNext(), null)) {
+            current.setNext(current.getNext().getNext());
             this.size-=1;
         }
 
     }
 
+    public MyNode<E> getLastNode(){
+
+        MyNode<E> current = this.head;
+
+        while(current != null){
+
+            if(current.getNext() == null){
+                break;
+            }else{
+                current = current.getNext();
+            }
+
+        }
+
+        return current;
+
+    }
+
+    public void resetLinkedList(){
+        assert this.head != null;
+        this.head = null;
+    }
+
     /* | ---------------------------------- +  Transversal  + ---------------------------------- | */
 
-    @Override
     public void forEach(Consumer<? super E> action) {
 
         MyNode<E> current = this.head;
 
         while (current != null) {
-            System.out.println(current.getItem());
+            action.accept(current.getItem());
             current = current.getNext();
         }
 
-        System.out.println("--------------------------------");
+    }
+
+    public E get(String hash) {
+
+        MyNode<E> current = this.head;
+
+        while(current != null){
+
+            if(Objects.equals(current.getCode(), hash)){
+                break;
+            }else{
+                current = current.getNext();
+            }
+
+        }
+
+        assert current != null;
+        return current.getItem();
 
     }
 
-    @Override
-    public E get(int index) {
-        return null;
-    }
-
-    @Override
     public int size() {
         return this.size;
     }
